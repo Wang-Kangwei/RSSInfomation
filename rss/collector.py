@@ -234,7 +234,6 @@ class RSSCollector:
                 # 创建新闻记录
                 news = News(
                     title=item.title,
-                    summary=item.summary,
                     content=item.content,
                     link=item.link,
                     author=item.author,

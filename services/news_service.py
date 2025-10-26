@@ -130,7 +130,6 @@ class NewsService:
                 and_(
                     or_(
                         News.title.contains(keyword),
-                        News.summary.contains(keyword),
                         News.content.contains(keyword)
                     ),
                     News.is_published == True

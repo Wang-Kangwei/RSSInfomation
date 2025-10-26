@@ -111,12 +111,7 @@ class NewsValidator:
         title = Validator.min_length(title, 3, "标题")
         return title.strip()
 
-    @staticmethod
-    def validate_summary(summary: str) -> str:
-        """验证新闻摘要"""
-        summary = Validator.max_length(summary, 2000, "摘要")
-        return summary.strip() if summary else ""
-
+  
     @staticmethod
     def validate_content(content: str) -> str:
         """验证新闻内容"""
@@ -178,7 +173,6 @@ class NewsValidator:
         validated_data = {}
 
         validated_data['title'] = NewsValidator.validate_title(data.get('title', ''))
-        validated_data['summary'] = NewsValidator.validate_summary(data.get('summary', ''))
         validated_data['content'] = NewsValidator.validate_content(data.get('content', ''))
         validated_data['link'] = NewsValidator.validate_link(data.get('link', ''))
         validated_data['author'] = NewsValidator.validate_author(data.get('author', ''))

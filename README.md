@@ -13,6 +13,7 @@ RSSInfomation是一个自动化的RSS新闻收集系统，专为微信公众号�
 - 📱 **微信集成**: 通过微信公众号自动回复展示新闻
 - ⚙️ **灵活配置**: 支持动态添加/管理RSS源
 - 📊 **数据统计**: 提供新闻收集和展示统计功能
+- 🔍 **内容搜索**: 支持标题和内容的全文搜索
 
 ## 技术栈
 
@@ -418,10 +419,24 @@ RSSInfomation/
 ├── config/              # 配置文件
 ├── core/                # 核心模块
 ├── models/              # 数据模型
+│   ├── news.py          # 新闻数据模型（已移除summary字段）
+│   ├── source.py        # RSS源数据模型
+│   └── base.py          # 基础模型类
 ├── rss/                 # RSS收集模块
+│   ├── collector.py     # RSS收集器（已移除summary处理）
+│   ├── parser.py        # RSS解析器（已移除summary字段）
+│   └── __init__.py
 ├── wechat/              # 微信接口模块
+│   ├── formatter.py     # 消息格式化器（已移除summary显示）
+│   └── __init__.py
 ├── services/            # 业务服务
+│   ├── news_service.py  # 新闻服务（已移除summary搜索）
+│   └── __init__.py
 ├── utils/               # 工具模块
+│   ├── validators.py    # 数据验证器（已移除summary验证）
+│   ├── helpers.py       # 辅助函数
+│   ├── logger.py        # 日志工具
+│   └── __init__.py
 ├── tests/               # 测试目录
 └── logs/                # 日志目录
 ```
@@ -431,6 +446,32 @@ RSSInfomation/
 详细的开发文档请参考：
 - [需求文档.md](./需求文档.md) - 完整的需求说明
 - [TODO.md](./TODO.md) - 详细的开发计划
+
+## 📝 更新日志
+
+### v1.1.0 (2024-10-26)
+**重大变更**: 移除新闻摘要字段
+- 🗑️ **数据库**: 移除`news`表中的`summary`字段
+- 🧹 **代码重构**: 清理所有与summary相关的代码
+  - `models/news.py`: 移除summary字段定义
+  - `rss/parser.py`: 移除NewsItem中的summary属性和_get_summary方法
+  - `rss/collector.py`: 移除summary字段的数据保存
+  - `services/news_service.py`: 移除search_news中的summary搜索条件
+  - `wechat/formatter.py`: 移除微信消息格式化中的summary处理
+  - `utils/validators.py`: 移除validate_summary方法和验证逻辑
+- 🔍 **搜索优化**: 搜索功能现在基于标题和内容进行全文搜索
+- 📱 **显示优化**: 微信消息格式更简洁，突出标题和来源信息
+
+**技术影响**:
+- 数据库存储空间减少
+- 消息格式更紧凑，提升用户体验
+- 代码结构更清晰，降低维护成本
+
+**迁移指南**:
+如需更新现有数据库，请手动执行：
+```sql
+ALTER TABLE news DROP COLUMN summary;
+```
 
 ## 📞 技术支持
 

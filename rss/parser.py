@@ -20,7 +20,6 @@ class NewsItem:
     """新闻项数据类"""
     def __init__(self):
         self.title: str = ""
-        self.summary: str = ""
         self.content: str = ""
         self.link: str = ""
         self.author: str = ""
@@ -98,9 +97,6 @@ class StandardRSSParser(RSSParser):
             # 链接
             news_item.link = self._get_link(entry)
 
-            # 摘要
-            news_item.summary = self._get_summary(entry)
-
             # 内容
             news_item.content = self._get_content(entry)
 
@@ -136,18 +132,6 @@ class StandardRSSParser(RSSParser):
         """获取链接"""
         link = getattr(entry, 'link', '')
         return link.strip() if link else ''
-
-    def _get_summary(self, entry: Any) -> str:
-        """获取摘要"""
-        summary = ''
-
-        # 尝试多种摘要字段
-        for field in ['summary', 'description']:
-            if hasattr(entry, field):
-                summary = getattr(entry, field)
-                break
-
-        return self.content_cleaner.clean_html(summary) if summary else ''
 
     def _get_content(self, entry: Any) -> str:
         """获取内容"""

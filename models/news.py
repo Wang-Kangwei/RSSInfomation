@@ -11,7 +11,6 @@ class News(BaseModel):
     __tablename__ = 'news'
 
     title = Column(String(500), nullable=False, comment='新闻标题')
-    summary = Column(Text, comment='新闻摘要')
     content = Column(Text, comment='新闻内容')
     link = Column(String(1000), nullable=False, comment='新闻链接')
     author = Column(String(100), comment='作者')

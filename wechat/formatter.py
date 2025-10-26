@@ -23,7 +23,6 @@ class WechatTextFormatter(MessageFormatter):
     def __init__(self):
         self.max_items_per_message = 8  # 每条消息最多显示8条新闻
         self.max_title_length = 50     # 标题最大长度
-        self.max_summary_length = 100  # 摘要最大长度
 
     def format(self, news_items: List[News], **kwargs) -> str:
         """格式化新闻为微信文本消息"""
@@ -52,17 +51,8 @@ class WechatTextFormatter(MessageFormatter):
         if len(title) > self.max_title_length:
             title = truncate_text(title, self.max_title_length)
 
-        # 处理摘要
-        summary = clean_text(news.summary) if news.summary else ""
-        if summary and len(summary) > self.max_summary_length:
-            summary = truncate_text(summary, self.max_summary_length)
-
         # 构建新闻项
         news_item = f"{index}. 【{title}】"
-
-        # 添加摘要（如果有）
-        if summary:
-            news_item += f"\n   {summary}"
 
         # 添加来源和时间
         source_info = f"📰 {news.source_name}"
@@ -148,9 +138,6 @@ class MarkdownFormatter(MessageFormatter):
 
         for i, news in enumerate(news_items, 1):
             content += f"## {i}. {news.title}\n\n"
-
-            if news.summary:
-                content += f"{news.summary}\n\n"
 
             content += f"**来源**: {news.source_name}\n"
             content += f"**链接**: [查看原文]({news.link})\n"
