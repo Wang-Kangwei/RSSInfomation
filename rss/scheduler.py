@@ -25,7 +25,8 @@ class RSSScheduler:
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {}
         self.scheduler = BackgroundScheduler()
-        self.collector = RSSCollector()
+        max_news_per_source = self.config.get('max_news_per_source', 10)
+        self.collector = RSSCollector(max_news_per_source=max_news_per_source)
         self.is_running = False
         self.job_stats = {
             'total_executions': 0,

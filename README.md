@@ -74,11 +74,12 @@ WECHAT_TOKEN=your_token
 WECHAT_ENCODING_AES_KEY=your_encoding_aes_key
 
 # 系统配置
-RSS_COLLECT_HOUR=5
-NEWS_RETENTION_DAYS=7
-LOG_LEVEL=INFO
-FLASK_ENV=development
-SECRET_KEY=your_secret_key_here
+RSS_COLLECT_HOUR=5              # RSS收集时间（小时，默认凌晨5点）
+NEWS_RETENTION_DAYS=7          # 新闻保留天数
+MAX_NEWS_PER_SOURCE=10         # 每个RSS源最大新闻数量（默认10条）
+LOG_LEVEL=INFO                 # 日志级别
+FLASK_ENV=development          # Flask环境
+SECRET_KEY=your_secret_key_here # Flask密钥
 ```
 
 ### 3. 数据库准备
@@ -344,6 +345,60 @@ kill -9 PID
 - 配置系统监控
 - 设置异常告警
 - 日志分析
+
+## 🔧 数据库字符集配置
+
+### 中文乱码问题解决
+
+如果在使用MySQL命令行客户端查询时遇到中文乱码问题，请按以下步骤解决：
+
+#### 1. 运行字符集诊断工具
+```bash
+# 检查当前数据库字符集配置
+/usr/bin/python3 fix_charset.py
+```
+
+该工具会显示当前数据库、表的字符集配置，并提供修复选项。
+
+#### 2. 修复数据库字符集
+如果需要修复，在诊断工具提示时选择 'y'，工具会自动：
+- 将数据库字符集修改为 `utf8mb4`
+- 将所有表字符集修改为 `utf8mb4`
+- 使用 `utf8mb4_unicode_ci` 排序规则
+
+#### 3. 配置MySQL客户端
+在MySQL配置文件中设置客户端字符集：
+
+**Linux/macOS** (`~/.my.cnf`):
+```ini
+[client]
+default-character-set = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4
+```
+
+**Windows** (`my.ini`):
+```ini
+[client]
+default-character-set = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4
+```
+
+#### 4. 在MySQL命令行中设置
+如果临时需要设置，可在MySQL命令行中执行：
+```sql
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+```
+
+#### 5. 重新创建数据库表
+修复字符集后，建议重新创建数据库表以确保所有字段都使用正确的字符集：
+```bash
+/usr/bin/python3 manage.py create-tables
+```
 
 ## 🔒 安全注意事项
 

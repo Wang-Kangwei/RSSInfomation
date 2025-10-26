@@ -21,9 +21,10 @@ logger = get_logger(__name__)
 class RSSCollector:
     """RSS收集器"""
 
-    def __init__(self):
+    def __init__(self, max_news_per_source=10):
         self.parser_factory = RSSParserFactory()
         self.session = requests.Session()
+        self.max_news_per_source = max_news_per_source
 
         # 设置请求头
         self.session.headers.update({
@@ -60,6 +61,11 @@ class RSSCollector:
 
                 # 解析RSS内容
                 news_items = self._parse_rss_content(rss_content, source)
+
+                # 限制每个RSS源的新闻数量
+                if len(news_items) > self.max_news_per_source:
+                    news_items = news_items[:self.max_news_per_source]
+                    logger.info(f"RSS源 {source.name} 新闻数量超过限制，截取前 {self.max_news_per_source} 条")
 
                 # 保存新闻数据
                 saved_count = self._save_news_items(news_items)

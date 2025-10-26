@@ -27,7 +27,11 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_size': 10,
         'pool_recycle': 3600,
-        'pool_pre_ping': True
+        'pool_pre_ping': True,
+        'connect_args': {
+            'charset': 'utf8mb4',
+            'use_unicode': True
+        }
     }
 
     # 微信公众号配置
@@ -39,6 +43,7 @@ class Config:
     # RSS收集配置
     RSS_COLLECT_HOUR = int(os.environ.get('RSS_COLLECT_HOUR', 5))
     NEWS_RETENTION_DAYS = int(os.environ.get('NEWS_RETENTION_DAYS', 7))
+    MAX_NEWS_PER_SOURCE = int(os.environ.get('MAX_NEWS_PER_SOURCE', 10))
 
     # 日志配置
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')

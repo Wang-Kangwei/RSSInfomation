@@ -109,7 +109,7 @@ def _init_default_data():
             },
             {
                 'config_key': 'max_news_per_source',
-                'config_value': '50',
+                'config_value': '10',
                 'description': '每个RSS源最大新闻数量'
             }
         ]
@@ -166,7 +166,11 @@ def collect_rss_command():
         print("开始手动收集RSS新闻...")
 
         try:
-            collector = RSSCollector()
+            # 从配置中获取每个RSS源最大新闻数量限制
+            max_news_per_source = app.config.get('MAX_NEWS_PER_SOURCE', 10)
+            print(f"每个RSS源最多收集 {max_news_per_source} 条新闻")
+
+            collector = RSSCollector(max_news_per_source=max_news_per_source)
             result = collector.collect_all_sources()
 
             print(f"RSS收集完成！")
