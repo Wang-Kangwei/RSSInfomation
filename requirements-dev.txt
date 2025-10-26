@@ -1,0 +1,30 @@
+# 包含生产依赖
+-r requirements.txt
+
+# 测试框架
+pytest==7.4.2
+pytest-cov==4.1.0
+pytest-flask==1.2.0
+pytest-asyncio==0.21.1
+
+# 代码质量
+black==23.9.1
+flake8==6.1.0
+isort==5.12.0
+pylint==3.0.2
+
+# 调试工具
+flask-debugtoolbar==0.13.1
+ipython==8.15.0
+
+# 文档生成
+Sphinx==7.2.6
+
+# 性能分析
+py-spy==0.3.14
+
+# 类型检查
+mypy==1.5.1
+
+# 安全检查
+bandit==1.7.5
