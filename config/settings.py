@@ -30,7 +30,8 @@ class Config:
         'pool_pre_ping': True,
         'connect_args': {
             'charset': 'utf8mb4',
-            'use_unicode': True
+            'use_unicode': True,
+            'autocommit': True
         }
     }
 
