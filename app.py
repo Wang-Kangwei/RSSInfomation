@@ -94,6 +94,13 @@ class WeChatNewsBot:
         try:
             app_logger.info(f"收到用户消息: {message.content} (from {message.source})")
 
+            # 检查消息中是否包含"新闻"关键词
+            if "新闻" not in message.content:
+                # 返回帮助信息
+                help_text = "📰 您好！发送包含新闻的消息获取今日新闻"
+                reply = create_reply(help_text, message)
+                return reply
+
             # 获取今日新闻
             news_list = db_manager.get_today_news(limit=Config.MAX_NEWS_PER_REPLY)
 
@@ -252,6 +259,47 @@ def internal_error(error):
     return {'error': 'Internal server error'}, 500
 
 
+@app.route('/debug')
+def debug_info():
+    """调试信息接口"""
+    import socket
+    import platform
+
+    # 获取本机IP
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+
+    return {
+        'server_info': {
+            'hostname': hostname,
+            'local_ip': local_ip,
+            'platform': platform.system(),
+            'python_version': platform.python_version()
+        },
+        'flask_info': {
+            'debug_mode': app.debug,
+            'host': '0.0.0.0',
+            'port': 2222,
+            'url_rules': [str(rule) for rule in app.url_map.iter_rules()]
+        },
+        'database_info': {
+            'news_count': db_manager.get_news_count() if db_manager else 'not_initialized'
+        },
+        'wechat_config': {
+            'app_id': Config.WECHAT_APP_ID[:10] + '...' if Config.WECHAT_APP_ID else 'not_set',
+            'token_set': bool(Config.WECHAT_TOKEN),
+            'app_secret_set': bool(Config.WECHAT_APP_SECRET)
+        }
+    }
+
+
+# 处理根路径的微信请求 - 修复路由问题
+@app.route('/', methods=['GET', 'POST'])
+def wechat_root():
+    """处理微信服务器发送到根路径的请求"""
+    return wechat()
+
+
 if __name__ == '__main__':
     app_logger.info("启动微信公众号RSS新闻机器人...")
 
@@ -262,9 +310,9 @@ if __name__ == '__main__':
         app_logger.error(f"配置验证失败: {e}")
         exit(1)
 
-    # 启动Flask应用
+    # 启动Flask应用 (使用端口2222)
     app.run(
         host='0.0.0.0',
-        port=5000,
+        port=2222,
         debug=Config.DEBUG
     )
